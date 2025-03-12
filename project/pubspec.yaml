@@ -100,4 +100,5 @@ flutter:
 
   assets:
     - datas/
+    - shorebird.yaml
 
