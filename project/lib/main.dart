@@ -154,7 +154,7 @@ class MyAppState extends State<MyApp> {
     _appsFlyerManager.afStart();
 
     _controller = WebViewController()
-      ..loadRequest(Uri.parse('https://derby-league.com/dl_app/Top/'))
+      ..loadRequest(Uri.parse('https://derby-league.com/dl_app_dev/Top/'))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
@@ -167,7 +167,7 @@ class MyAppState extends State<MyApp> {
           },
           onPageFinished: (String url) {
             logger.t('page finished: $url');
-            if (url == 'https://derby-league.com/dl_app/Payment/') {
+            if (url == 'https://derby-league.com/dl_app_dev/Payment/') {
               injectJavascript(_controller);
             }
 
