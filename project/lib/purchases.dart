@@ -341,7 +341,7 @@ class Purchases extends ChangeNotifier {
     logger.t('_getUserId()');
 
     final response = await http
-        .get(Uri.parse('https://derby-league.com/dl_app/Top/before_p'));
+        .get(Uri.parse('https://derby-league.com/dl_app_dev/Top/before_p'));
     final jsonResponse = jsonDecode(response.body);
     userId = jsonResponse['user_id'];
   }
