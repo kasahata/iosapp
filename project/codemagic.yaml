@@ -1,0 +1,36 @@
+workflows:
+  ios-build:
+    name: iOS Build
+    environment:
+      cocoapods_cache: true
+    triggering:
+      push:
+        branches:
+          - main
+      pull_request:
+        branches:
+          - main
+    platform: ios
+    build_type: release
+    code_signing:
+      distribution_type: APP_STORE # または DEVELOPMENT
+      ios_signing: auto # または manual
+      # manual の場合は、証明書とプロビジョニングプロファイルの設定が必要
+      # certificate: ...
+      # provisioning_profile: ...
+      developer_portal: # 自動署名の場合に Developer Portal の接続名を設定
+        id: your_developer_portal_integration_id # Codemagic のインテグレーション設定で確認
+    scripts:
+      - name: Install dependencies
+        script: |
+          if [ -f pubspec.yaml ]; then
+            flutter pub get
+          fi
+          if [ -f Podfile ]; then
+            pod install
+          fi
+      - name: Build iOS app
+        script: |
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
