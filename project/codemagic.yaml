@@ -19,7 +19,7 @@ workflows:
       # certificate: ...
       # provisioning_profile: ...
       developer_portal: # 自動署名の場合に Developer Portal の接続名を設定
-        id: your_developer_portal_integration_id # Codemagic のインテグレーション設定で確認
+        id: derbyleaguepayment # Codemagic のインテグレーション設定で確認
     scripts:
       - name: Install dependencies
         script: |
