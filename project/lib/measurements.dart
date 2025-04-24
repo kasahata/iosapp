@@ -60,7 +60,7 @@ class AppsFlyerManager extends ChangeNotifier {
       final appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
         appId: "1280323739",
-        showDebug: true,
+        showDebug: false,
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
         manualStart: true,
       ); // Optional field
@@ -69,7 +69,7 @@ class AppsFlyerManager extends ChangeNotifier {
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-        showDebug: true,
+        showDebug: false,
         manualStart: true,
       ); // Optional field
 
