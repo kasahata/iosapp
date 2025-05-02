@@ -211,11 +211,25 @@ class MyAppState extends State<MyApp> {
     }();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
       key: _scaffoldKey,
       child: Scaffold(
+        // デバッグ用設定ボタン(歯車アイコン)
+        // TODO: 本番リリース時には削除してください
+        floatingActionButton: debug
+            ? FloatingActionButton(
+                onPressed: () {
+                  showDialog<void>(
+                      context: context,
+                      builder: (_) {
+                        return _appsFlyerManager.buildMeasurementButtons();
+                      });
+                },
+                child: const Icon(Icons.settings),
+              )
+            : null,
         body: SafeArea(
           child: Column(
             children: [
