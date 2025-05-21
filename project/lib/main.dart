@@ -211,7 +211,7 @@ class MyAppState extends State<MyApp> {
     }();
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
       key: _scaffoldKey,
@@ -219,7 +219,8 @@ class MyAppState extends State<MyApp> {
         // デバッグ用設定ボタン(歯車アイコン)
         // TODO: 本番リリース時には削除してください
         floatingActionButton: debug
-            ? FloatingActionButton(
+            ? null
+            : FloatingActionButton(
                 onPressed: () {
                   showDialog<void>(
                       context: context,
@@ -228,8 +229,7 @@ class MyAppState extends State<MyApp> {
                       });
                 },
                 child: const Icon(Icons.settings),
-              )
-            : null,
+              ),
         body: SafeArea(
           child: Column(
             children: [
