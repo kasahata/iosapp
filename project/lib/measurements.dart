@@ -35,7 +35,7 @@ Future<Map<String, MeasurementData>> importCSV() async {
       continue;
     }
 
-    String url = lineSplit[4]; //開発用URL、本番では4
+    String url = debug ? lineSplit[4] : lineSplit[4]; //開発用URL、本番では4
 
     impotrMap[url] = MeasurementData(
         lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4]);
@@ -45,10 +45,11 @@ Future<Map<String, MeasurementData>> importCSV() async {
 
 class AppsFlyerManager extends ChangeNotifier {
   late AppsflyerSdk _appsflyerSdk;
-  Map _deepLinkData = {};
-  Map _gcd = {};
+  //Map _deepLinkData = {};
+  //Map _gcd = {};
   Map<String, MeasurementData> _eventMap = {};
 
+  // called by main.dart > initState()
   void afStart() async {
     logger.t('AppsFlyerManager()');
 
@@ -61,8 +62,6 @@ class AppsFlyerManager extends ChangeNotifier {
         appId: "1280323739",
         showDebug: true,
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
-        disableAdvertisingIdentifier: true, // Optional field
-        disableCollectASA: true, //Optional field
         manualStart: true,
       ); // Optional field
 
@@ -70,10 +69,7 @@ class AppsFlyerManager extends ChangeNotifier {
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-        appId: '', // Androidの場合は不要
         showDebug: true,
-        disableAdvertisingIdentifier: true, // Optional field
-        disableCollectASA: true, //Optional field
         manualStart: true,
       ); // Optional field
 
@@ -82,65 +78,23 @@ class AppsFlyerManager extends ChangeNotifier {
 
     // Initialization of the AppsFlyer SDK
     await _appsflyerSdk.initSdk(
-        registerConversionDataCallback: true,
-        registerOnAppOpenAttributionCallback: true,
-        registerOnDeepLinkingCallback: true);
-
-    // Conversion data callback
-    _appsflyerSdk.onInstallConversionData((res) {
-      logger.t("onInstallConversionData res: $res");
-      _gcd = res;
-    });
-
-    // App open attribution callback
-    _appsflyerSdk.onAppOpenAttribution((res) {
-      logger.t("onAppOpenAttribution res: $res");
-      _deepLinkData = res;
-    });
-
-    // Deep linking callback
-    _appsflyerSdk.onDeepLinking((DeepLinkResult dp) {
-      switch (dp.status) {
-        case Status.FOUND:
-          logger.t(dp.deepLink?.toString());
-          logger.t("deep link value: ${dp.deepLink?.deepLinkValue}");
-          break;
-        case Status.NOT_FOUND:
-          logger.t("deep link not found");
-          break;
-        case Status.ERROR:
-          logger.t("deep link error: ${dp.error}");
-          break;
-        case Status.PARSE_ERROR:
-          logger.t("deep link status parsing error");
-          break;
-      }
-      logger.t("onDeepLinking res: $dp");
-      _deepLinkData = dp.toJson();
-    });
+        registerConversionDataCallback: false,
+        registerOnAppOpenAttributionCallback: false,
+        registerOnDeepLinkingCallback: false);
 
     //_appsflyerSdk.anonymizeUser(true);
-    if (Platform.isAndroid) {
-      _appsflyerSdk.performOnDeepLinking();
-    }
+    // if (Platform.isAndroid) {
+    //   _appsflyerSdk.performOnDeepLinking();
+    // }
 
     // Starting the SDK with optional success and error callbacks
-    _appsflyerSdk.startSDK(
-      onSuccess: () {
-        logger.t("AppsFlyer SDK initialized successfully.");
-      },
-      onError: (int errorCode, String errorMessage) {
-        logger.t(
-            "Error initializing AppsFlyer SDK: Code $errorCode - $errorMessage");
-      },
-    );
+    _appsflyerSdk.startSDK();
 
-    // test Appflyerイベント
-    //logEvent('af_login', {});
-
-    buildMeasurementButtons();
+    // test send event button
+    //buildMeasurementButtons();
   }
 
+  // urlに対応するイベントを送信
   bool logUrlEvent(String url) {
     if (_eventMap.containsKey(url)) {
       MeasurementData data = _eventMap[url]!;
@@ -151,11 +105,11 @@ class AppsFlyerManager extends ChangeNotifier {
     return false;
   }
 
+  // Send Custom Events
   logEvent(String eventName, Map eventValues) {
     _appsflyerSdk.logEvent(eventName, eventValues);
   }
 
-  // Inside AppsFlyerManager class
   Widget buildMeasurementButtons() {
     return Column(
       children: _eventMap.values.map((data) {
