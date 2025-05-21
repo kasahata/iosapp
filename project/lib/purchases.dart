@@ -235,7 +235,7 @@ class Purchases extends ChangeNotifier {
   //iOSのレシート検証API呼び出し
   Future<http.Response> validateReceiptIos(receiptBody) async {
     const String url = debug
-        ? 'https://sandbox.itunes.apple.com/verifyReceipt'
+        ? 'https://buy.itunes.apple.com/verifyReceipt'
         : 'https://buy.itunes.apple.com/verifyReceipt';
     return await http.post(
       Uri.parse(url),
@@ -369,7 +369,7 @@ class Purchases extends ChangeNotifier {
     logger.t(message);
 
     Uri url = debug
-        ? Uri.parse("https://derby-league.com/dl_app_dev/Payment/payment_end")
+        ? Uri.parse("https://derby-league.com/dl_app/Payment/payment_end")
         : Uri.parse("https://derby-league.com/dl_app/Payment/payment_end");
     Map<String, String> headers = {'content-type': 'application/json'};
     String body = json.encode({
