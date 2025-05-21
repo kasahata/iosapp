@@ -8,4 +8,4 @@ final logger = Logger();
 /// デバッグフラグ
 /// 現状、課金処理のpost先URLの切り替えに使用しています。
 /// 本番リリース時にはフラグをfalseにしてください。
-const debug = true;
+const debug = false;
