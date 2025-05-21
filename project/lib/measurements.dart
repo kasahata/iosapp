@@ -38,7 +38,7 @@ Future<Map<String, MeasurementData>> importCSV() async {
     String url = debug ? lineSplit[4] : lineSplit[4]; //開発用URL、本番では4
 
     impotrMap[url] = MeasurementData(
-        lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4]);
+        lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[4], lineSplit[4]);
   }
   return Future<Map<String, MeasurementData>>.value(impotrMap);
 }
