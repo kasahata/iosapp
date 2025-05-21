@@ -35,7 +35,7 @@ Future<Map<String, MeasurementData>> importCSV() async {
       continue;
     }
 
-    String url = debug ? lineSplit[3] : lineSplit[4]; //開発用URL、本番では4
+    String url = debug ? lineSplit[4] : lineSplit[4]; //開発用URL、本番では4
 
     impotrMap[url] = MeasurementData(
         lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4]);
@@ -60,7 +60,7 @@ class AppsFlyerManager extends ChangeNotifier {
       final appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
         appId: "1280323739",
-        showDebug: false,
+        showDebug: true,
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
         manualStart: true,
       ); // Optional field
@@ -69,7 +69,7 @@ class AppsFlyerManager extends ChangeNotifier {
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-        showDebug: false,
+        showDebug: true,
         manualStart: true,
       ); // Optional field
 
@@ -171,3 +171,4 @@ class TestMeasurementButton extends StatelessWidget {
     );
   }
 }
+
