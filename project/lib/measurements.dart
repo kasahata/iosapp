@@ -57,15 +57,22 @@ class AppsFlyerManager extends ChangeNotifier {
 
     //iOSかAndroidかで初期化処理を分ける
     if (Platform.isIOS) {
-      final appsFlyerOptions = AppsFlyerOptions(
-        afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-        appId: "1280323739",
-        showDebug: true,
-        timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
-        manualStart: true,
-      ); // Optional field
-
+      AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
+          afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
+          appId: "1280323739",
+          showDebug: true,
+          timeToWaitForATTUserAuthorization: 50,
+          // manualStart: true, // この行を削除
+      );
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+      
+      // initSdk呼び出し自体がSDKの起動を含むようになります
+      await _appsflyerSdk.initSdk(
+          registerConversionDataCallback: false,
+          registerOnAppOpenAttributionCallback: false,
+          registerOnDeepLinkingCallback: false
+      );
+      // _appsflyerSdk.startSDK(); // この行も不要になります
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
@@ -77,10 +84,7 @@ class AppsFlyerManager extends ChangeNotifier {
     }
 
     // Initialization of the AppsFlyer SDK
-    await _appsflyerSdk.initSdk(
-        registerConversionDataCallback: false,
-        registerOnAppOpenAttributionCallback: false,
-        registerOnDeepLinkingCallback: false);
+
 
     /* コールバック不要
     // Conversion data callback
