@@ -2,7 +2,7 @@ name: project
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.3.2+1
+version: 1.3.2+2
 
 environment:
   sdk: '>=3.2.6 <4.0.0' # Flutterのバージョンが3.2.6以上であればこのままでOK
