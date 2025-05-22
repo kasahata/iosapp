@@ -45,6 +45,8 @@ Future<Map<String, MeasurementData>> importCSV() async {
 
 class AppsFlyerManager extends ChangeNotifier {
   late AppsflyerSdk _appsflyerSdk;
+  //Map _deepLinkData = {};
+  //Map _gcd = {};
   Map<String, MeasurementData> _eventMap = {};
 
   // called by main.dart > initState()
@@ -53,64 +55,78 @@ class AppsFlyerManager extends ChangeNotifier {
 
     _eventMap = await importCSV();
 
-    // iOSかAndroidかで初期化処理を分ける
+    //iOSかAndroidかで初期化処理を分ける
     if (Platform.isIOS) {
-      // 1. ATTプロンプトの要求
-      final TrackingAuthorizationStatus status =
-          await AppTrackingTransparency.requestTrackingAuthorization();
-      logger.i('ATT Status: $status');
-
-      // 2. AppsFlyerOptionsの設定
       final appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
         appId: "1280323739",
         showDebug: true,
-        // ATTの同意状況に応じてAppsFlyer SDKの開始を待機させる設定
-        // ユーザーが許可した場合（.authorized）は待機不要（false）
-        // それ以外の場合は待機 (true) - SDKがATTの応答を待つ
-        waitForATTUserConsent: (status == TrackingAuthorizationStatus.authorized) ? false : true,
-        manualStart: true, // initSdkとstartSDKを明示的に呼び出す
-      );
+        timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
+        manualStart: true,
+      ); // Optional field
 
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
-
-      // 3. AppsFlyer SDKの初期化と開始
-      // ここでのロジックは、ATTの許可に関わらずSDKを開始するように見えますが、
-      // waitForATTUserConsentがtrueの場合、startSDKがATTの許可を待つように動作します。
-      // ただし、明示的に許可された場合のみ完全にトラッキングしたい場合は、
-      // ここで分岐することも可能です。
-      await _appsflyerSdk.initSdk(
-          registerConversionDataCallback: false,
-          registerOnAppOpenAttributionCallback: false,
-          registerOnDeepLinkingCallback: false);
-      _appsflyerSdk.startSDK();
-      logger.i('AppsFlyer SDK started on iOS (ATT status: $status).');
-
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
         showDebug: true,
         manualStart: true,
-      );
+      ); // Optional field
 
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
-
-      // AndroidではATTは不要なので、すぐにSDKを初期化・開始
-      await _appsflyerSdk.initSdk(
-          registerConversionDataCallback: false,
-          registerOnAppOpenAttributionCallback: false,
-          registerOnDeepLinkingCallback: false);
-      _appsflyerSdk.startSDK();
-      logger.i('AppsFlyer SDK started on Android.');
-    } else {
-      // その他のプラットフォーム（Webなど）
-      logger.w('Unsupported platform. AppsFlyer SDK will not initialize.');
-      return; // サポートされていないプラットフォームの場合は処理を終了
     }
 
-    // ここにあった共通のinitSdkとstartSDKの呼び出しは、
-    // 各プラットフォームのif/elseブロック内に移動しました。
-    // これにより、ATTの同意状況に応じてAppsFlyerの初期化を制御できます。
+    // Initialization of the AppsFlyer SDK
+    await _appsflyerSdk.initSdk(
+        registerConversionDataCallback: false,
+        registerOnAppOpenAttributionCallback: false,
+        registerOnDeepLinkingCallback: false);
+
+    /* コールバック不要
+    // Conversion data callback
+    _appsflyerSdk.onInstallConversionData((res) {
+      logger.t("onInstallConversionData res: $res");
+      _gcd = res;
+    });
+
+    // App open attribution callback
+    _appsflyerSdk.onAppOpenAttribution((res) {
+      logger.t("onAppOpenAttribution res: $res");
+      _deepLinkData = res;
+    });
+
+    // Deep linking callback
+    _appsflyerSdk.onDeepLinking((DeepLinkResult dp) {
+      switch (dp.status) {
+        case Status.FOUND:
+          logger.t(dp.deepLink?.toString());
+          logger.t("deep link value: ${dp.deepLink?.deepLinkValue}");
+          break;
+        case Status.NOT_FOUND:
+          logger.t("deep link not found");
+          break;
+        case Status.ERROR:
+          logger.t("deep link error: ${dp.error}");
+          break;
+        case Status.PARSE_ERROR:
+          logger.t("deep link status parsing error");
+          break;
+      }
+      logger.t("onDeepLinking res: $dp");
+      _deepLinkData = dp.toJson();
+    });
+    */
+
+    //_appsflyerSdk.anonymizeUser(true);
+    // if (Platform.isAndroid) {
+    //   _appsflyerSdk.performOnDeepLinking();
+    // }
+
+    // Starting the SDK with optional success and error callbacks
+    _appsflyerSdk.startSDK();
+
+    // test send event button
+    //buildMeasurementButtons();
   }
 
   // urlに対応するイベントを送信
