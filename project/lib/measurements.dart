@@ -59,7 +59,7 @@ class AppsFlyerManager extends ChangeNotifier {
     if (Platform.isIOS) {
       final appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-        appId: "1280323739",
+        appId: "id1280323739",
         showDebug: true,
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
         manualStart: true,
