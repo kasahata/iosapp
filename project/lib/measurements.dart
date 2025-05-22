@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
@@ -6,7 +7,7 @@ import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'globals.dart'; // loggerが定義されていると仮定します
+import 'globals.dart';
 
 class MeasurementData {
   //計測場所詳細,計測場所,コード名,ページURL（開発）,ページURL（本番）
@@ -34,8 +35,7 @@ Future<Map<String, MeasurementData>> importCSV() async {
       continue;
     }
 
-    String url = debug ? lineSplit[3] : lineSplit[4]; // 開発用URLは通常 lineSplit[3] (devURL) です。lineSplit[4] (prodURL) は本番用でしょう。
-                                                    // ご自身のCSVの構成に合わせて適宜変更してください。
+    String url = lineSplit[3]; //開発用URL、本番では4
 
     impotrMap[url] = MeasurementData(
         lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4]);
@@ -45,11 +45,10 @@ Future<Map<String, MeasurementData>> importCSV() async {
 
 class AppsFlyerManager extends ChangeNotifier {
   late AppsflyerSdk _appsflyerSdk;
-  //Map _deepLinkData = {};
-  //Map _gcd = {};
+  Map _deepLinkData = {};
+  Map _gcd = {};
   Map<String, MeasurementData> _eventMap = {};
 
-  // called by main.dart > initState()
   void afStart() async {
     logger.t('AppsFlyerManager()');
 
@@ -62,6 +61,8 @@ class AppsFlyerManager extends ChangeNotifier {
         appId: "1280323739",
         showDebug: true,
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
+        disableAdvertisingIdentifier: true, // Optional field
+        disableCollectASA: true, //Optional field
         manualStart: true,
       ); // Optional field
 
@@ -69,7 +70,10 @@ class AppsFlyerManager extends ChangeNotifier {
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
+        appId: '', // Androidの場合は不要
         showDebug: true,
+        disableAdvertisingIdentifier: true, // Optional field
+        disableCollectASA: true, //Optional field
         manualStart: true,
       ); // Optional field
 
@@ -78,11 +82,10 @@ class AppsFlyerManager extends ChangeNotifier {
 
     // Initialization of the AppsFlyer SDK
     await _appsflyerSdk.initSdk(
-        registerConversionDataCallback: false,
-        registerOnAppOpenAttributionCallback: false,
-        registerOnDeepLinkingCallback: false);
+        registerConversionDataCallback: true,
+        registerOnAppOpenAttributionCallback: true,
+        registerOnDeepLinkingCallback: true);
 
-    /* コールバック不要
     // Conversion data callback
     _appsflyerSdk.onInstallConversionData((res) {
       logger.t("onInstallConversionData res: $res");
@@ -115,21 +118,29 @@ class AppsFlyerManager extends ChangeNotifier {
       logger.t("onDeepLinking res: $dp");
       _deepLinkData = dp.toJson();
     });
-    */
 
     //_appsflyerSdk.anonymizeUser(true);
-    // if (Platform.isAndroid) {
-    //   _appsflyerSdk.performOnDeepLinking();
-    // }
+    if (Platform.isAndroid) {
+      _appsflyerSdk.performOnDeepLinking();
+    }
 
     // Starting the SDK with optional success and error callbacks
-    _appsflyerSdk.startSDK();
+    _appsflyerSdk.startSDK(
+      onSuccess: () {
+        logger.t("AppsFlyer SDK initialized successfully.");
+      },
+      onError: (int errorCode, String errorMessage) {
+        logger.t(
+            "Error initializing AppsFlyer SDK: Code $errorCode - $errorMessage");
+      },
+    );
 
-    // test send event button
-    //buildMeasurementButtons();
+    // test Appflyerイベント
+    //logEvent('af_login', {});
+
+    buildMeasurementButtons();
   }
 
-  // urlに対応するイベントを送信
   bool logUrlEvent(String url) {
     if (_eventMap.containsKey(url)) {
       MeasurementData data = _eventMap[url]!;
@@ -140,11 +151,11 @@ class AppsFlyerManager extends ChangeNotifier {
     return false;
   }
 
-  // Send Custom Events
   logEvent(String eventName, Map eventValues) {
     _appsflyerSdk.logEvent(eventName, eventValues);
   }
 
+  // Inside AppsFlyerManager class
   Widget buildMeasurementButtons() {
     return Column(
       children: _eventMap.values.map((data) {
@@ -171,3 +182,4 @@ class TestMeasurementButton extends StatelessWidget {
     );
   }
 }
+
