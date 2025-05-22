@@ -55,43 +55,36 @@ class AppsFlyerManager extends ChangeNotifier {
 
     // iOSかAndroidかで初期化処理を分ける
     if (Platform.isIOS) {
-      // iOSの場合、ATTプロンプトを先に表示
+      // 1. ATTプロンプトの要求
       final TrackingAuthorizationStatus status =
           await AppTrackingTransparency.requestTrackingAuthorization();
-      logger.i('ATT Status: $status'); // デバッグ用にステータスを出力
+      logger.i('ATT Status: $status');
 
+      // 2. AppsFlyerOptionsの設定
       final appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
         appId: "1280323739",
         showDebug: true,
-        // ここを `true` に設定することで、ATTの同意が得られるまでAppsFlyer SDKの開始を待機させることができます。
-        // `requestTrackingAuthorization()` を呼び出す前に設定する必要があります。
-        waitForATTUserConsent: (status == TrackingAuthorizationStatus.authorized) ? false : true, // ユーザーが許可した場合は待機不要、それ以外は待機
-        manualStart: true, // `initSdk` と `startSDK` を明示的に呼び出す
+        // ATTの同意状況に応じてAppsFlyer SDKの開始を待機させる設定
+        // ユーザーが許可した場合（.authorized）は待機不要（false）
+        // それ以外の場合は待機 (true) - SDKがATTの応答を待つ
+        waitForATTUserConsent: (status == TrackingAuthorizationStatus.authorized) ? false : true,
+        manualStart: true, // initSdkとstartSDKを明示的に呼び出す
       );
 
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
 
-      // ユーザーが同意した場合、または同意が得られなくてもSDKを初期化・開始するロジック
-      // ATTのステータスに基づいてAppsFlyer SDKの開始を制御
-      if (status == TrackingAuthorizationStatus.authorized) {
-        await _appsflyerSdk.initSdk(
-            registerConversionDataCallback: false,
-            registerOnAppOpenAttributionCallback: false,
-            registerOnDeepLinkingCallback: false);
-        _appsflyerSdk.startSDK();
-        logger.i('AppsFlyer SDK started with ATT authorized.');
-      } else {
-        // 同意が得られなかった場合でもAppsFlyer SDKを初期化・開始するかどうかは、
-        // アプリケーションの要件とAppsFlyerのトラッキングポリシーによります。
-        // IDFAが利用できないため、トラッキングの精度は落ちます。
-        logger.w('User denied or restricted tracking. AppsFlyer SDK will start but with limited tracking capabilities.');
-        await _appsflyerSdk.initSdk(
-            registerConversionDataCallback: false,
-            registerOnAppOpenAttributionCallback: false,
-            registerOnDeepLinkingCallback: false);
-        _appsflyerSdk.startSDK(); // 同意がなくてもSDKを開始
-      }
+      // 3. AppsFlyer SDKの初期化と開始
+      // ここでのロジックは、ATTの許可に関わらずSDKを開始するように見えますが、
+      // waitForATTUserConsentがtrueの場合、startSDKがATTの許可を待つように動作します。
+      // ただし、明示的に許可された場合のみ完全にトラッキングしたい場合は、
+      // ここで分岐することも可能です。
+      await _appsflyerSdk.initSdk(
+          registerConversionDataCallback: false,
+          registerOnAppOpenAttributionCallback: false,
+          registerOnDeepLinkingCallback: false);
+      _appsflyerSdk.startSDK();
+      logger.i('AppsFlyer SDK started on iOS (ATT status: $status).');
 
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
