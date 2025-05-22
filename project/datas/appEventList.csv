@@ -1,2 +1,16 @@
 計測場所詳細,計測場所,コード名,ページURL（開発）,ページURL（本番）
+馬主デビュー(tutorial_1),チュートリアル,tutorial_start,https://derby-league.com/dl_app/Adword/ad_001,https://derby-league.com/dl_app/Adword/ad_001
+チュートリアル完了(tutorial_25),チュートリアル,tutorial_completed,https://derby-league.com/dl_app/Adword/ad_002,https://derby-league.com/dl_app/Adword/ad_002
+共闘レース結果ページ,共闘レース,joint_race_results,https://derby-league.com/dl_app/Adword/ad_003,https://derby-league.com/dl_app/Adword/ad_003
+レース結果ページ,ゲームメイン,race_results,https://derby-league.com/dl_app/Adword/ad_004,https://derby-league.com/dl_app/Adword/ad_004
+配合結果ページ,ゲームメイン,combination_results,https://derby-league.com/dl_app/Adword/ad_005,https://derby-league.com/dl_app/Adword/ad_005
+BC馬リスト新規登録完了ページ,ゲームメイン,bc_horse_list_registration_completed,https://derby-league.com/dl_app/Adword/ad_006,https://derby-league.com/dl_app/Adword/ad_006
+チーム馬リスト新規登録完了ページ,ゲームメイン,team_horse_list_registration_completed,https://derby-league.com/dl_app/Adword/ad_007,https://derby-league.com/dl_app/Adword/ad_007
+Dリーグ、PF対抗リーグ追切TIMEアクション（ノーマル追切、スペシャル追切）使用結果ページ,チーム戦,league_match_action_completed,https://derby-league.com/dl_app/Adword/ad_008,https://derby-league.com/dl_app/Adword/ad_008
+Dリーグ、PF対抗リーグ追切TIMEパートナー使用結果ページ,チーム戦,league_match_partner_completed,https://derby-league.com/dl_app/Adword/ad_009,https://derby-league.com/dl_app/Adword/ad_009
+Dリーグ、PF対抗リーグレース結果ページ,チーム戦,league_match_results,https://derby-league.com/dl_app/Adword/ad_010,https://derby-league.com/dl_app/Adword/ad_010
+馬水晶購入完了ページ,馬水晶,horsecrystal_purchase_completed,https://derby-league.com/dl_app/Adword/ad_011,https://derby-league.com/dl_app/Adword/ad_011
+アイテム購入完了ページ,ショップ,item_purchase_completed,https://derby-league.com/dl_app/Adword/ad_012,https://derby-league.com/dl_app/Adword/ad_012
+調教パートナー強化完了ページ,調教パートナー,partner_reinforcement_completed,https://derby-league.com/dl_app/Adword/ad_013,https://derby-league.com/dl_app/Adword/ad_013
+馬具強化完了ページ,馬具,horse_gear_reinforcement_completed,https://derby-league.com/dl_app/Adword/ad_014,https://derby-league.com/dl_app/Adword/ad_014
 レベルアップ完了ページ,ゲームメイン,level_up,https://derby-league.com/dl_app/Adword/ad_015,https://derby-league.com/dl_app/Adword/ad_015
