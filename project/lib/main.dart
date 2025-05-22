@@ -73,8 +73,8 @@ class MyAppState extends State<MyApp> {
   bool _isProcessing = false;
 
   // Appsflyer アプリ内イベントを送信する
-  Future<bool?> sendAppFlyerEvent(String url) async {
-    bool? logResult;
+  void sendAppFlyerEvent(String url) {
+    bool logResult;
     try {
       logResult = _appsFlyerManager.logUrlEvent(url);
       if (logResult == true) {
@@ -83,7 +83,6 @@ class MyAppState extends State<MyApp> {
     } catch (e) {
       logger.t("Failed to log event: $e");
     }
-    return logResult;
   }
 
   // AppTrackingTransparencyの初期化
@@ -219,7 +218,18 @@ class MyAppState extends State<MyApp> {
       child: Scaffold(
         // デバッグ用設定ボタン(歯車アイコン)
         // TODO: 本番リリース時には削除してください
-
+        floatingActionButton: debug
+            ? FloatingActionButton(
+                onPressed: () {
+                  showDialog<void>(
+                      context: context,
+                      builder: (_) {
+                        return _appsFlyerManager.buildMeasurementButtons();
+                      });
+                },
+                child: const Icon(Icons.settings),
+              )
+            : null,
         body: SafeArea(
           child: Column(
             children: [
@@ -250,3 +260,4 @@ class MyAppState extends State<MyApp> {
     );
   }
 }
+
