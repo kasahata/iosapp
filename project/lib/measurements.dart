@@ -74,6 +74,23 @@ class AppsFlyerManager extends ChangeNotifier {
       ); // Optional field
 
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+      
+    // ここにATTプロンプトの呼び出しを追加
+    final TrackingAuthorizationStatus status =
+        await AppTrackingTransparency.requestTrackingAuthorization();
+    logger.i('ATT Status: $status'); // デバッグ用にステータスを出力
+  
+    // ユーザーが同意した場合のみSDKを開始
+    if (status == TrackingAuthorizationStatus.authorized) {
+      await _appsflyerSdk.initSdk(
+          registerConversionDataCallback: false,
+          registerOnAppOpenAttributionCallback: false,
+          registerOnDeepLinkingCallback: false);
+      _appsflyerSdk.startSDK();
+    } else {
+      logger.w('User denied or restricted tracking. AppsFlyer SDK will not start or track fully.');
+      // 同意が得られなかった場合のハンドリング（例：機能制限など）
+    }
     }
 
     // Initialization of the AppsFlyer SDK
