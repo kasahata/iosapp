@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io'; // dart:ffi は不要なため削除
-import 'package:app_tracking_transparency/app_tracking_transparency.dart'; // main.dart で処理するため不要な場合が多いですが、今回は残します
+import 'dart:io';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
