@@ -15,7 +15,7 @@ dependencies:
   webview_flutter: ^4.7.0 # 最新版なのでこのまま
   in_app_purchase: ^3.2.0 # 最新版なのでこのまま
   logger: ^2.2.0 # 最新版なのでこのまま
-  appsflyer_sdk: ^6.10.0
+  appsflyer_sdk: ^6.16.1
   app_tracking_transparency: ^2.0.0
   http: ^1.2.1 # 最新版に更新
   in_app_purchase_storekit: ^0.3.14 # 最新版なのでこのまま
