@@ -74,7 +74,7 @@ class AppsFlyerManager extends ChangeNotifier {
       // `main.dart` で既に `AppTrackingTransparency.requestTrackingAuthorization()` を呼んでいるが、
       //念のためAppsFlyer SDK側でも承認を待つロジックを含めることで、より堅牢になる
       try {
-        await _appsflyerSdk.waitForATTUserAuthorization(timeoutInterval: 60); // タイムアウトは適切に調整
+       // await _appsflyerSdk.waitForATTUserAuthorization(timeoutInterval: 60); // タイムアウトは適切に調整
         logger.t('AppsFlyer SDK: ATT user authorization granted or timed out.');
       } catch (e) {
         logger.e('Error waiting for ATT user authorization: $e');
