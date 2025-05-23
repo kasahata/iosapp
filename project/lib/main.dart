@@ -68,7 +68,7 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   late final WebViewController _controller;
   late final Purchases _purchases = Purchases();
-  WidgetsFlutterBinding.ensureInitialized(); // 必須
+  
 
   // AppsFlyerManagerのインスタンスを作成し、初期化
   final appsFlyerManager = AppsFlyerManager();
