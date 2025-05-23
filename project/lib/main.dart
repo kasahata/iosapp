@@ -53,7 +53,7 @@ Future<void> injectJavascript(WebViewController controller) async {
 }
 
 void main() => runApp(
-  const MaterialApp(
+      const MaterialApp(
         home: MyApp(),
       ),
     );
@@ -68,11 +68,7 @@ class MyApp extends StatefulWidget {
 class MyAppState extends State<MyApp> {
   late final WebViewController _controller;
   late final Purchases _purchases = Purchases();
-  
-
-  // AppsFlyerManagerのインスタンスを作成し、初期化
-  final appsFlyerManager = AppsFlyerManager();
-  await appsFlyerManager.afStart(); // 非同期処理を待つ
+  late final AppsFlyerManager _appsFlyerManager = AppsFlyerManager();
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   bool _isProcessing = false;
 
