@@ -38,7 +38,7 @@ Future<Map<String, MeasurementData>> importCSV() async {
     String url = debug ? lineSplit[3] : lineSplit[4]; //開発用URL、本番では4
 
     impotrMap[url] = MeasurementData(
-        lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[3], lineSplit[4]);
+        lineSplit[0], lineSplit[1], lineSplit[2], lineSplit[4], lineSplit[4]);
   }
   return Future<Map<String, MeasurementData>>.value(impotrMap);
 }
@@ -57,22 +57,15 @@ class AppsFlyerManager extends ChangeNotifier {
 
     //iOSかAndroidかで初期化処理を分ける
     if (Platform.isIOS) {
-      AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
-          afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
-          appId: "1280323739",
-          showDebug: true,
-          timeToWaitForATTUserAuthorization: 50,
-          // manualStart: true, // この行を削除
-      );
+      final appsFlyerOptions = AppsFlyerOptions(
+        afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
+        appId: "1280323739",
+        showDebug: true,
+        timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
+        manualStart: true,
+      ); // Optional field
+
       _appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
-      
-      // initSdk呼び出し自体がSDKの起動を含むようになります
-      await _appsflyerSdk.initSdk(
-          registerConversionDataCallback: false,
-          registerOnAppOpenAttributionCallback: false,
-          registerOnDeepLinkingCallback: false
-      );
-      // _appsflyerSdk.startSDK(); // この行も不要になります
     } else if (Platform.isAndroid) {
       final AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "8dTkZaHxT87sFdF4HdaJUh",
@@ -84,7 +77,10 @@ class AppsFlyerManager extends ChangeNotifier {
     }
 
     // Initialization of the AppsFlyer SDK
-
+    await _appsflyerSdk.initSdk(
+        registerConversionDataCallback: false,
+        registerOnAppOpenAttributionCallback: false,
+        registerOnDeepLinkingCallback: false);
 
     /* コールバック不要
     // Conversion data callback
