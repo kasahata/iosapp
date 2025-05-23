@@ -53,7 +53,6 @@ Future<void> injectJavascript(WebViewController controller) async {
 }
 
 void main() => runApp(
-WidgetsFlutterBinding.ensureInitialized();
   const MaterialApp(
         home: MyApp(),
       ),
