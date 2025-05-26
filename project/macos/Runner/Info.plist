@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSAdvertisingAttributionReportEndpoint</key>
+	<string>https://skadpostbacks.appsflyer.com/api/postbacks</string>
 </dict>
 </plist>
