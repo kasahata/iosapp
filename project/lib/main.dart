@@ -21,7 +21,7 @@ Future<void> injectJavascript(WebViewController controller) async {
     {
       flutterChannel.postMessage(id);
     }
-
+    
     const IosButtonNum = 6;
     for(var i = 0; i <= IosButtonNum;i++)
     {
@@ -30,7 +30,7 @@ Future<void> injectJavascript(WebViewController controller) async {
       const button = document.getElementById(id);
       console.log('button id: ' + id + ', button: ' + button);
       if (button != null) {
-        (function(btn) {
+        (function(btn) { 
           btn.onclick = function() { SendId(btn.id); };
         })(button);
       }
@@ -44,7 +44,7 @@ Future<void> injectJavascript(WebViewController controller) async {
       const button = document.getElementById(id);
       console.log('button id: ' + id + ', button: ' + button);
       if (button != null) {
-        (function(btn) {
+        (function(btn) { 
           btn.onclick = function() { SendId(btn.id); };
         })(button);
       }
@@ -85,28 +85,14 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  // AppTrackingTransparencyの初期化とAppsFlyer SDKの開始を行う新しいメソッド
-  Future<void> _initATTAndAppsFlyer() async {
-    logger.t('_initATTAndAppsFlyer started.');
-
-    // AppTrackingTransparencyの初期化（プロンプト表示と承認待機）
-    // _initATT() メソッドは不要になり、ここに統合します
+  // AppTrackingTransparencyの初期化
+  // トラッキング認証が未設定の場合、設定を要求する
+  Future<void> _initATT() async {
     final status = await AppTrackingTransparency.trackingAuthorizationStatus;
     if (status == TrackingStatus.notDetermined) {
-      // プロンプトが初めて表示される場合
-      // 少し待機することで、UIの準備が整い、プロンプトがスムーズに表示される可能性が高まります。
       await Future.delayed(const Duration(milliseconds: 200));
       await AppTrackingTransparency.requestTrackingAuthorization();
-      logger.t('ATT requestTrackingAuthorization called.');
-    } else {
-      // 既に承認済み、拒否済み、制限済みの場合
-      logger.t('ATT status is already: $status');
     }
-
-    // AppsFlyerManagerの初期化と開始
-    // ATTの承認を待った後に呼び出すことで、IDFAを確実に取得し、正確な計測を可能にする
-    await _appsFlyerManager.initializeAndStartAfSdk(); // measurements.dart で修正したメソッド
-    logger.t('AppsFlyerManager initialized and started.');
   }
 
   Future<void> _purchase(String id) async {
@@ -160,11 +146,13 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    // ATTの初期化とAppsFlyer SDKの開始を非同期で実行
-    // これをinitStateの最初の方に配置することで、アプリ起動後速やかに処理が開始される
-    _initATTAndAppsFlyer();
+    // AppTrackingTransparencyの初期化
+    // Build後に確認のダイアログが表示されます。
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _initATT());
 
-    // WebViewの初期化は既存のままでOK
+    // アプリ計測の初期化
+    _appsFlyerManager.afStart();
+
     _controller = WebViewController()
       ..loadRequest(Uri.parse('https://derby-league.com/dl_app/Top/'))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -215,8 +203,6 @@ class MyAppState extends State<MyApp> {
           .setMediaPlaybackRequiresUserGesture(false);
     }
 
-    // 購入履歴の復元処理は、AppsFlyerの初期化とは直接関係ないため、この位置で問題ありません。
-    // _isProcessing の状態管理はアプリのUXに合わせて調整してください。
     () async {
       await _restore();
       setState(() {
@@ -274,4 +260,3 @@ class MyAppState extends State<MyApp> {
     );
   }
 }
-
